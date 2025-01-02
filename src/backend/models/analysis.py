@@ -16,7 +16,7 @@ model = genai.GenerativeModel(
 
 
 def analyze_with_gemini(
-    image_path: str,
+    image_bytes: bytes,
     analysis_type: Literal[
         "visual_analysis",
         "color_analysis",
@@ -99,12 +99,11 @@ def analyze_with_gemini(
         }
         """,
     }
-    upload_file = genai.upload_file(image_path)
-    response = model.generate_content([prompts[analysis_type], upload_file])
+    response = model.generate_content([prompts[analysis_type], image_bytes])
     return json.loads(response.text)
 
 
-def analyze_marketing_strategy(image_path: str):
+def analyze_marketing_strategy(image_bytes: bytes):
     """マーケティング戦略の分析を実行"""
     prompt = """
     以下のマーケティング戦略について包括的に分析してください。
@@ -176,9 +175,5 @@ def analyze_marketing_strategy(image_path: str):
         ]
     }
     """
-    upload_file = genai.upload_file(image_path)
-    response = model.generate_content([prompt, upload_file])
+    response = model.generate_content([prompt, image_bytes])
     return json.loads(response.text)
-
-
-# print(analyze_marketing_strategy("data/イオン冬ギフト表紙近畿.pdf"))
